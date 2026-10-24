@@ -1,0 +1,18 @@
+# Служебные файлы сборки
+out/
+*.idsig
+.gradle/
+build/
+
+# Локальные настройки Free My TV (город, ключ TMDB; личное — не публикуем)
+config.properties
+
+# Логи и дампы с телевизора
+*.log
+*.txt
+!docs/*.md
+!scripts/*.ps1
+
+# Windows
+Thumbs.db
+desktop.ini
