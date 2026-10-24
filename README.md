@@ -72,6 +72,8 @@
 
 ## Установка (по шагам)
 
+Готовые APK — в [Releases](https://github.com/kryzhukov/sber-tv-at30a6-free-my-tv/releases/tag/v1.0) или в папке [`apk/`](apk).
+
 Нужны: компьютер в той же сети, `adb` (Android platform-tools). На ТВ включена отладка по сети (порт 5555).
 
 ```powershell
