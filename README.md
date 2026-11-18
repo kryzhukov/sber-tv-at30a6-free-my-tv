@@ -26,7 +26,7 @@
 - **Удалены 19 приложений Сбера** (`pm uninstall --user 0`, не просто выключены): лаунчер, заставка, магазин, установщик `TvSetupApp`, промо «Умного дома», браузер, «Видео», «Музыка», SberPlay, профиль, подписки, родительский контроль, детская комната, баг-репортер, опросы, бета-канал обновлений, «Умный дом», настройки СберБанка, Projectivy Launcher.
 - **«Сбер-Стоп» 1.4** — сторож: задание JobScheduler после каждой загрузки и каждые ~2 минуты удаляет вернувшееся, выключает автообновления, запрещает рекламный оверлей Сбера и возвращает Free My TV главным экраном, если Сбер его забрал.
 - **Курсы валют вместо крипты**: доллар, евро, юань и турецкая лира к рублю (ЦБ РФ, раз в сутки).
-- **YouTube**: Google YouTube + **SmartTube** (без рекламы) + **СберTube** (`ru.sberdevices.startube`, в нём отключён внутренний SOCKS-прокси, из-за которого он не работал).
+- **YouTube**: Google YouTube + **SmartTube** (без рекламы) + **СберTube** (`ru.sberdevices.startube`, в нём отключён внутренний SOCKS-прокси, из-за которого он не работал) + **Cobalt «YouTube.com»** — клиент YouTube TV из прошивки Яндекс-ТВ, работает без GMS и Widevine ([docs/КОБАЛЬТ-YOUTUBE.md](docs/КОБАЛЬТ-YOUTUBE.md)).
 - **Родной пульт Сбера работает полностью** (проверено), **Homuz** с телефона тоже — включена `ru.sberdevices.gamepad.service`.
 - Автообновления прошивки и приложений выключены (`ota_disable_automatic_update=1`, `auto_update_apps=0`).
 
@@ -70,6 +70,29 @@
 
 \* На скриншоте 17 имя аккаунта в боковом меню намеренно размыто.
 
+## YouTube через Cobalt («YouTube.com») — ещё один клиент
+
+В довесок к Google YouTube / SmartTube / СберTube на ТВ ставится **тот самый** клиент YouTube TV, который предустановлен на
+телевизорах Яндекса: приложение **`com.yandex.tv.ytplayer`**, на экране — **«YouTube.com»**, версия **1.1.93**, 32-бит (`armeabi-v7a`).
+Внутри — движок **Cobalt** (HTML5-рантайм), поэтому интерфейс, рекомендации и реклама приходят с `youtube.com/tv`.
+
+![YouTube.com (Cobalt) на SaluteTV AT30A6](screenshots/18-cobalt-youtube-home.png)
+
+Почему он интересен на этом ТВ:
+
+- **не требует GMS/Play Services и Widevine** — на AT30A6 их нет, а Cobalt работает;
+- **32-битная сборка** — как раз наш Amlogic T5W;
+- использует **аппаратные декодеры** Amlogic (H.264, VP9 и даже **AV1** — `OMX.amlogic.av1.decoder.awesome2`);
+- **вход в аккаунт по коду** (`google.com/device`), голосовой поиск — после выдачи `RECORD_AUDIO`;
+- ставится двумя способами: обычным приложением (без root, минута) или **системным** в `/system/app/YtPlayer` (root, как на Яндекс-ТВ —
+  переживает сброс к заводским).
+
+Ограничения, о которых честно: реклама **остаётся** (она серверная, в APK её нет — без рекламы только SmartTube), автообновлений нет
+(Play Маркета нет), при старте 10–20 секунд чёрный экран, а `screencap` не захватывает видео-слой (скриншот снимается с интерфейса).
+
+Полная инструкция с командами, скриптом и откатом — **[docs/КОБАЛЬТ-YOUTUBE.md](docs/КОБАЛЬТ-YOUTUBE.md)**,
+автоматизация — **[scripts/install-cobalt-youtube.sh](scripts/install-cobalt-youtube.sh)**.
+
 ## Установка (по шагам)
 
 Готовые APK — в [Releases](https://github.com/kryzhukov/sber-tv-at30a6-free-my-tv/releases/tag/v1.0) или в папке [`apk/`](apk).
@@ -111,8 +134,8 @@ foreach ($p in $junk) { & $adb shell "pm uninstall --user 0 $p" }
 apk/            FreeMyTV.apk, SberStop.apk (готовые, подписаны)
 freemytv/       наш форк Free My TV (полные исходники app/, сборка build.sh / build-windows.ps1)
 sberstop/       исходники сторожа «Сбер-Стоп» (Java, без Gradle) + скрипт сборки
-docs/           ИНСТРУКЦИЯ.md (по-русски, всё по шагам), device-info.md
-scripts/        debloat.ps1 (всё одной командой), collect-device-info.ps1
+docs/           ИНСТРУКЦИЯ.md (по-русски, всё по шагам), device-info.md, КОБАЛЬТ-YOUTUBE.md (YouTube.com/Cobalt)
+scripts/        debloat.ps1 (всё одной командой), collect-device-info.ps1, install-cobalt-youtube.sh
 screenshots/    до/после
 ```
 
